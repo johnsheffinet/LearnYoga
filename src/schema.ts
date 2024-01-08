@@ -1,5 +1,7 @@
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
+let greeting = 'Hello, World';
+
 const typeDefinitions = `
   type Query {
     hello: String!
@@ -8,7 +10,7 @@ const typeDefinitions = `
 
 const resolvers = {
   Query: {
-    hello: () => "Hello, World!",
+    hello: () => greeting,
   },
 };
 
