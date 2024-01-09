@@ -37,7 +37,7 @@ const resolvers = {
     feed: () => links,
   },
   Mutation: {
-    createLink: (_, args: {url: string, description: string}) => {
+    createLink: (parent: unknown, args: {url: string, description: string}) => {
       const link: Link = {
         id: `link-${links.length}`,
         url: args.url,
