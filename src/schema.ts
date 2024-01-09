@@ -6,6 +6,10 @@ const typeDefinitions = `
     feed: [Link!]!
   }
  
+  type Mutation {
+    createLink(url: String!, description: String!): Link!
+  }
+ 
   type Link {
     id: ID!
     description: String!
@@ -32,11 +36,22 @@ const resolvers = {
     info: () => `This is the API of a Hackernews Clone`,
     feed: () => links,
   },
-  Link: {
-    id: (parent: Link) => parent.id,
-    description: (parent: Link) => parent.description,
-    url: (parent: Link) => parent.url,
-  },
+  Mutation: {
+   createLink: (url: string, description: string) => {
+    const link: Link = {
+     id: `link-${links.length}`,
+     url: url,
+     description: description,
+    }
+    
+    return link
+   }
+  }
+//  Link: {
+//    id: (parent: Link) => parent.id,
+//    description: (parent: Link) => parent.description,
+//    url: (parent: Link) => parent.url,
+//  },
 };
 
 export const schema = makeExecutableSchema({
