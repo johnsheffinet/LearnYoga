@@ -37,21 +37,23 @@ const resolvers = {
     feed: () => links,
   },
   Mutation: {
-   createLink: (url: string, description: string) => {
-    const link: Link = {
-     id: `link-${links.length}`,
-     url: url,
-     description: description,
-    }
-    
-    return link
-   }
-  }
-//  Link: {
-//    id: (parent: Link) => parent.id,
-//    description: (parent: Link) => parent.description,
-//    url: (parent: Link) => parent.url,
-//  },
+    createLink: (_, args: {url: string, description: string}) => {
+      const link: Link = {
+        id: `link-${links.length}`,
+        url: args.url,
+        description: args.description,
+      };
+
+      links.push(link);
+
+      return link;
+    },
+  },
+  //  Link: {
+  //    id: (parent: Link) => parent.id,
+  //    description: (parent: Link) => parent.description,
+  //    url: (parent: Link) => parent.url,
+  //  },
 };
 
 export const schema = makeExecutableSchema({
