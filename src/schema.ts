@@ -1,62 +1,67 @@
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
+type User = { id: string; name: string };
+let users: User[] = [{ id: "user-0", name: "Joan" }];
+
 const typeDefinitions = `
   type Query {
-    info: String!
-    feed: [Link!]!
+   hello: String!
+   selectUsers: [User!]!
+   selectUser(id: ID!): User
   }
- 
+  
   type Mutation {
-    createLink(url: String!, description: String!): Link!
+   createUser(name: String!): User!
+   updateUser(id: ID!, name: String!): User!
+   deleteUser(id: ID!): User!
   }
- 
-  type Link {
-    id: ID!
-    description: String!
-    url: String!
+  
+  type User {
+   id: ID!
+   name: String!
   }
 `;
 
-type Link = {
-  id: string;
-  url: string;
-  description: string;
-};
-
-const links: Link[] = [
-  {
-    id: "link-0",
-    url: "https://graphql-yoga.com",
-    description: "The easiest way of setting up a GraphQL server",
-  },
-];
-
 const resolvers = {
   Query: {
-    info: () => `This is the API of a Hackernews Clone`,
-    feed: () => links,
-  },
-  Mutation: {
-    createLink: (
-      parent: unknown,
-      args: { url: string; description: string },
-    ) => {
-      const link: Link = {
-        id: `link-${links.length}`,
-        url: args.url,
-        description: args.description,
-      };
-
-      links.push(link);
-
-      return link;
+    hello: () => "Hello, world!",
+    selectUsers: () => {
+      return users;
+    },
+    selectUser: (parent: unknown, args: {id: string}) => {
+      let user = {id: 'unknown', name: "unknown"};
+      const i = users.findIndex((x) => x.id === args.id);
+      if (i > -1) {
+       user = users[i];
+      }
+      return user;
     },
   },
-  //  Link: {
-  //    id: (parent: Link) => parent.id,
-  //    description: (parent: Link) => parent.description,
-  //    url: (parent: Link) => parent.url,
-  //  },
+  Mutation: {
+    createUser: (parent: unknown, args: {name: string}) => {
+      const user = {id: `user-${users.length}`, name: args.name};
+      users.push(user);
+      return user;
+    },
+    updateUser: (parent: unknown, args: {id: string, name: string}) => {
+      let user = {id: 'unknown', name: "unknown"};
+      let i = users.findIndex((x) => x.id === args.id);
+      if (i > -1) {
+       users[i].name = args.name;
+       user = users[i];
+      };
+      return user;
+    },
+    deleteUser: (parent: unknown, args: {id: string}) => {
+      let user = {id: 'unknown', name: "unknown"};
+      const i = users.findIndex((x) => x.id === args.id);
+      if (i > -1) {
+       user = users[i];
+       users.splice(i, 1);
+      };
+      return user;
+    },
+  },
 };
 
 export const schema = makeExecutableSchema({
