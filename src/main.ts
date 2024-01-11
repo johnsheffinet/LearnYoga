@@ -1,6 +1,6 @@
 /*
-import { execute, parse } from "graphql";
 import { schema } from "./schema";
+import { execute, parse } from "graphql";
 
 async function main() {
   const myQuery = parse(`
@@ -20,9 +20,9 @@ async function main() {
 main();
 */
 
-import { createServer } from "http";
-import { createYoga } from "graphql-yoga";
 import { schema } from "./schema";
+import { createYoga } from "graphql-yoga";
+import { createServer } from "http";
 
 function main() {
   const yoga = createYoga({ schema });
