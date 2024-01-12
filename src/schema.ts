@@ -1,16 +1,19 @@
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
+let greeting = 'Hello, world!'
+
 type User = { id: string; name: string };
 let users: User[] = [{ id: "user-0", name: "Joan" }];
 
 const typeDefinitions = `
   type Query {
-   hello: String!
+   getHello: String!
    selectUsers: [User!]!
    selectUser(id: ID!): User
   }
   
   type Mutation {
+   setHello(value: String!): String!
    createUser(name: String!): User!
    updateUser(id: ID!, name: String!): User!
    deleteUser(id: ID!): User!
@@ -24,7 +27,7 @@ const typeDefinitions = `
 
 const resolvers = {
   Query: {
-    hello: () => "Hello, world!",
+    getHello: () => greeting,
     selectUsers: () => {
       return users;
     },
@@ -38,6 +41,7 @@ const resolvers = {
     },
   },
   Mutation: {
+    setHello: (parent: unknown, args: {value: string}) => greeting = args.value,
     createUser: (parent: unknown, args: {name: string}) => {
       const user = {id: `user-${users.length}`, name: args.name};
       users.push(user);
