@@ -1,19 +1,19 @@
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
-let greeting = 'Hello, world!'
+let greeting = '';
 
 type User = { id: string; name: string };
 let users: User[] = [{ id: "user-0", name: "Joan" }];
 
 const typeDefinitions = `
   type Query {
-   getHello: String!
+   getGreeting: String!
    selectUsers: [User!]!
-   selectUser(id: ID!): User
+   selectUser(value: FindUserInput!): User
   }
   
   type Mutation {
-   setHello(value: String!): String!
+   setGreeting(value: String!): String!
    createUser(name: String!): User!
    updateUser(id: ID!, name: String!): User!
    deleteUser(id: ID!): User!
@@ -23,46 +23,56 @@ const typeDefinitions = `
    id: ID!
    name: String!
   }
+  
+  input FindUserInput {
+    id: ID!
+  }
 `;
+
+interface FindUserInput {
+  id: string
+};
 
 const resolvers = {
   Query: {
-    getHello: () => greeting,
+    getGreeting: () => greeting,
     selectUsers: () => {
       return users;
     },
-    selectUser: (parent: unknown, args: {id: string}) => {
-      let user = {id: 'unknown', name: "unknown"};
-      const i = users.findIndex((x) => x.id === args.id);
+    selectUser: (parent: unknown, args: { value: FindUserInput }) => {
+      let user = { id: "unknown", name: "unknown" };
+      const i = users.findIndex((x) => x.id === args.value.id);
       if (i > -1) {
-       user = users[i];
+        user = users[i];
       }
       return user;
     },
   },
   Mutation: {
-    setHello: (parent: unknown, args: {value: string}) => greeting = args.value,
-    createUser: (parent: unknown, args: {name: string}) => {
-      const user = {id: `user-${users.length}`, name: args.name};
+    setGreeting: (parent: unknown, args: { value: string }) =>
+      (greeting = args.value),
+    createUser: (parent: unknown, args: { name: string }) => {
+      const p = parent;
+      const user = { id: `user-${users.length}`, name: args.name };
       users.push(user);
       return user;
     },
-    updateUser: (parent: unknown, args: {id: string, name: string}) => {
-      let user = {id: 'unknown', name: "unknown"};
+    updateUser: (parent: unknown, args: { id: string; name: string }) => {
+      let user = { id: "unknown", name: "unknown" };
       let i = users.findIndex((x) => x.id === args.id);
       if (i > -1) {
-       users[i].name = args.name;
-       user = users[i];
-      };
+        users[i].name = args.name;
+        user = users[i];
+      }
       return user;
     },
-    deleteUser: (parent: unknown, args: {id: string}) => {
-      let user = {id: 'unknown', name: "unknown"};
+    deleteUser: (parent: unknown, args: { id: string }) => {
+      let user = { id: "unknown", name: "unknown" };
       const i = users.findIndex((x) => x.id === args.id);
       if (i > -1) {
-       user = users[i];
-       users.splice(i, 1);
-      };
+        user = users[i];
+        users.splice(i, 1);
+      }
       return user;
     },
   },
